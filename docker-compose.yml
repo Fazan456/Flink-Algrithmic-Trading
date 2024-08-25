@@ -113,7 +113,7 @@ services:
     command: taskmanager
     environment:
       - FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager
-      - taskmanager.numberOfTaskslots: 20
+      - taskmanager.numberOfTaskslots=20
     networks:
       - datamasterylab
 
@@ -130,8 +130,8 @@ services:
     depends_on:
       - jobmanager
     environment:
-      - FLINK_JOBMANAGER_HOST=jobmanager
-      - FLINK_PROPERTIES=jobmanager.rpc.address:jobmanager
+      FLINK_JOBMANAGER_HOST: jobmanager
+      FLINK_PROPERTIES: jobmanager.rpc.address:jobmanager
     networks:
       - datamasterylab
 
