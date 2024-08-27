@@ -5,6 +5,7 @@ from alpaca_trade_api.common import URL
 from alpaca_config import keys
 from alpaca.common import Sort
 import datetime
+from utils import get_sentiment
 
 def produce_historical_news(
         redpanda_client:KafkaProducer,
@@ -47,6 +48,21 @@ def produce_historical_news(
             article['timestamp_ms']=timestamp_ms
             article['data_provider']='alpaca'
             article['sentiment']= get_sentiment(article['headline'])
+            article.pop('symbols')
+            article('symbol')= symbol
+
+            try:
+                future=redpanda_client.send(
+                    topic=topic,
+                    key=symbol,
+                    value=article
+                    timestamp=timestamp_ms
+                )
+                _ = future.get(timeout=10)
+                print(f'Sent {i+1} articles to {topic}')
+
+            except Exception as e:
+                print(f"Failed to send the article: {article}")
 
 
 def get_producer(brokers: list[str]):
